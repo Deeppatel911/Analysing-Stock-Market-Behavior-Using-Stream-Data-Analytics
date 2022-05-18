@@ -9,11 +9,11 @@ from django.core.paginator import Paginator
 # Create your views here.
 
 twelveDataUrl = 'https://api.twelvedata.com/'
-twelveDataApiKey = '06020458a2744ad4929fe26b0ba54423'
+twelveDataApiKey = 'YOUR_API_KEY'
 alphaUrl = 'https://www.alphavantage.co/'
-alphaApiKey = 'SVFIN8PAPLLCJ6HV'
+alphaApiKey = 'YOUR_API_KEY'
 finnhubUrl = 'https://finnhub.io/api/v1'
-finnhubApiKey = 'c80o9liad3ie5egtbpjg'
+finnhubApiKey = 'YOUR_API_KEY'
 
 
 # core data
