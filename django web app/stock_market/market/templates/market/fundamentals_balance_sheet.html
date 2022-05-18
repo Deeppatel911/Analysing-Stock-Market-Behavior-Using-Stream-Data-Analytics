@@ -1,0 +1,79 @@
+{% extends 'market/base.html' %}
+{% block content %}
+    <h1 style="margin:3%;text-align:center;">Balance Sheet</h1>
+    {% if output %}
+        
+        <div style="display:inline;">
+            <button name="annual_reports" id="annual_reports" onclick="toggleDisplay('annual');">Annual Reports</button>
+            <button name="quarterly_reports" id="quarterly_reports" onclick="toggleDisplay('quarterly');">Quarterly Reports</button><br><br>
+        </div>
+        <div id="annual">
+            <h4 style="text-align:left;">Annual Reports: </h4>
+            {% for v in output.annualReports %}
+            <div style="background: rgb(11,8,66);
+            background: linear-gradient(90deg, rgba(11,8,66,1) 14%, rgba(41,41,213,1) 100%, rgba(0,212,255,1) 100%);
+            width: auto;
+            height: auto;
+            margin: 3%;
+            padding: 2%;">
+            <p style="font-size: 20px; color: white;">fiscalDateEnding: {{v.fiscalDateEnding}}</p>
+            <p style="font-size: 20px; color: white;">reportedCurrency: {{v.reportedCurrency}}</p>
+            <p style="font-size: 20px; color: white;">totalAssets: {{v.totalAssets}}</p>
+            <p style="font-size: 20px; color: white;">totalCurrentAssets: {{v.totalCurrentAssets}}</p>
+            <p style="font-size: 20px; color: white;">inventory: {{v.inventory}}</p>
+            <p style="font-size: 20px; color: white;">currentNetReceivables: {{v.currentNetReceivables}}</p>
+            <p style="font-size: 20px; color: white;">totalNonCurrentAssets: {{v.totalNonCurrentAssets}}</p>
+            <p style="font-size: 20px; color: white;">investments: {{v.investments}}</p>
+            <p style="font-size: 20px; color: white;">totalLiabilities: {{v.totalLiabilities}}</p>
+            <p style="font-size: 20px; color: white;">commonStock: {{v.commonStock}}</p>
+            <p style="font-size: 20px; color: white;">totalShareholderEquity: {{v.totalShareholderEquity}}</p>
+            </div>
+
+            {% endfor %}<br><br>
+        </div>
+
+        <div id="quarterly" style="display:none;">
+            <h4 style="text-align:left;">Quarterly Reports: </h4>
+            {% for v in output.quarterlyReports %}
+            <div style="background: rgb(11,8,66);
+            background: linear-gradient(90deg, rgba(11,8,66,1) 14%, rgba(41,41,213,1) 100%, rgba(0,212,255,1) 100%);
+            width: auto;
+            height: auto;
+            margin: 3%;
+            padding: 2%;">
+            <p style="font-size: 20px; color: white;">fiscalDateEnding: {{v.fiscalDateEnding}}</p>
+            <p style="font-size: 20px; color: white;">reportedCurrency: {{v.reportedCurrency}}</p>
+            <p style="font-size: 20px; color: white;">totalAssets: {{v.totalAssets}}</p>
+            <p style="font-size: 20px; color: white;">totalCurrentAssets: {{v.totalCurrentAssets}}</p>
+            <p style="font-size: 20px; color: white;">inventory: {{v.inventory}}</p>
+            <p style="font-size: 20px; color: white;">currentNetReceivables: {{v.currentNetReceivables}}</p>
+            <p style="font-size: 20px; color: white;">totalNonCurrentAssets: {{v.totalNonCurrentAssets}}</p>
+            <p style="font-size: 20px; color: white;">investments: {{v.investments}}</p>
+            <p style="font-size: 20px; color: white;">totalLiabilities: {{v.totalLiabilities}}</p>
+            <p style="font-size: 20px; color: white;">commonStock: {{v.commonStock}}</p>
+            <p style="font-size: 20px; color: white;">totalShareholderEquity: {{v.totalShareholderEquity}}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+    {% endif %}
+
+    <script>
+        function toggleDisplay(id){
+            var x=document.getElementById(id);
+
+            if(x.id == "annual"){
+                var y=document.getElementById('quarterly');
+                y.style.display = "none";
+                x.style.display = "block";
+            }
+            else
+            {
+                var y=document.getElementById('annual');
+                y.style.display = "none";
+                x.style.display = "block";
+            }
+        }
+    </script>
+
+{% endblock %}

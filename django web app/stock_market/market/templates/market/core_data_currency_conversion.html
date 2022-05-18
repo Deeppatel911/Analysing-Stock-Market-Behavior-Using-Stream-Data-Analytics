@@ -1,0 +1,16 @@
+{% extends 'market/base.html' %}
+{% block content %}
+    <h1>Currency Conversion</h1><br>
+    <form action="/core_data/currency_conversion/" method="POST">
+        {% csrf_token %}
+        Symbol(from/to): <input type="text" name="symbol" id="symbol" required><br><br>
+        Amount: <input type="text" name="amount" id="amount" required><br><br>
+        <button type="submit">Convert</button><br><br>
+    </form>
+
+    {% if output %}
+        <p>Symbol: {{output.symbol}}</p>
+        <p>Rate: {{output.rate}}</p>
+        <p>Amount: {{output.amount}}</p>
+    {% endif %}
+{% endblock %}

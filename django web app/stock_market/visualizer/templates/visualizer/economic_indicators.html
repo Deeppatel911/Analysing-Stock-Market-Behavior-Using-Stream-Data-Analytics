@@ -1,0 +1,96 @@
+{% extends 'market/base.html' %}
+{% block content %}
+    <div>
+        <h1 style="margin:3%;text-align:center;">Economic Indicators</h1>
+        <div style="margin:3%;">
+            <canvas id="myChart" width="auto" height="auto"></canvas>
+        </div>
+    </div>
+
+    <script>
+
+    $(document).ready(function(){
+        $.ajax({
+              type:"POST",
+              url: "/get_economic_indicator_data/",
+              data: {
+                 'indicator': '{{indicator}}',
+              },
+              success: function (res, status) {
+                var data = res['output']['data'];
+                var graphTitle = res['output']['name'];
+                var subtitle = '(Unit: ' + res['output']['unit'] + ', Interval: ' + res['output']['interval'] + ')';
+
+                var dates = [];
+                var values = [];
+                //document.write(data[0]['value']);
+
+                for(var i=0;i<data.length;i++){
+                    dates.push(String(data[i]['date']));
+                    values.push(Number(data[i]['value']));
+                }
+
+                values.reverse();
+                dates.reverse();
+                //document.write(dates);
+
+                var myChart = document.getElementById('myChart').getContext('2d');
+
+                var ecoChart = new Chart(myChart,{
+                    type:'line',
+
+                    data:{
+                        labels:dates,
+                        datasets:[{
+                            label:'value',
+                            data:values,
+                            borderColor:'green',
+                            borderWidth:1
+                        }],
+                    },
+
+                    options:{
+                        responsive:true,
+                        scales:{
+                            x:{
+                                title:{
+                                    display:true,
+                                    text: 'Date-Time',
+                                    font:{
+                                        size:15
+                                    }
+                                }
+                            },
+                            y:{
+                                title:{
+                                    display:true,
+                                    text: 'Value',
+                                    font:{
+                                        size:15
+                                        }
+                                    }
+                                }
+                            },
+                        plugins:{
+                            title:{
+                                display:true,
+                                text:graphTitle,
+                                font:{
+                                    size:15
+                                }
+                            },
+                            subtitle: {
+                                display: true,
+                                text: subtitle
+                            }
+                        }
+                    }
+                });
+
+              }
+        });
+    });
+
+    </script>
+
+{% endblock %}

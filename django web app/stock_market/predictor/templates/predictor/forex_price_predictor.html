@@ -1,0 +1,57 @@
+{% extends 'market/base.html' %}
+{% block content %}
+<div>
+    <h1 style="margin:3%;text-align:center;">Price Predictor (Forex - {{from_symbol}}/{{to_symbol}})</h1>
+    <div style="margin:3%;">
+        <form style="margin:0 0 3% 0;" action="{% url 'price_predictor_forex' from_symbol to_symbol %}" method="POST">
+            {% csrf_token %}
+            <div>
+                <select style="padding:0.6%;width:93.8%;height:42px;margin:0% 0% 0.2% 0%;" class="custom-select" name="model" id="model">
+                    <option value="Model">Model</option>
+                    <option value="ARIMA">ARIMA</option>
+                    <option value="LSTM">LSTM</option>
+                    <option value="GRU">GRU</option>
+                </select>
+
+                <button style="padding:0.6%;margin:0 0 0.2% 0;" class="btn btn-primary" type="submit" name="submit">Predict</button>
+            </div>
+
+        </form>
+
+        {% if ltp %}
+        <div style="background: rgb(11,8,66);
+            background: linear-gradient(90deg, rgba(11,8,66,1) 14%, rgba(41,41,213,1) 100%, rgba(0,212,255,1) 100%);
+            width: auto;
+            height: auto;
+            padding: 2%;">
+            <p style="font-size: 20px; color: white;">Latest Trading Price(LTP) of {{from_symbol}} to {{to_symbol}}: {{ltp}} on {{ltd}}</p><br>
+            <p style="font-size: 20px; color: white;">Predicted Price of {{from_symbol}} to {{to_symbol}} for next 30 trading days using {{model}} model:</p>
+
+            <table class="table table-hover table-responsive" id="predicted_price">
+                <tr id="days">
+                    <th style="font-size: 20px; color: white;">Day</th>
+                    {% for i in days %}
+                        <td style="font-size: 20px; color: white;">{{i}}</td>
+                    {% endfor %}
+                </tr>
+                <tr id="close_price">
+                    <th style="font-size: 20px; color: white;">Close Price</th>
+                    {% for j in output %}
+                        <td style="font-size: 20px; color: white;">{{j}}</td>
+                    {% endfor %}
+                </tr>
+            </table>
+
+        </div>
+        {% endif %}
+
+        {% if error %}
+        <input type="hidden" id="hidden" value="{{error}}">
+        <script>
+                alert(document.getElementById('hidden').value);
+        </script>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

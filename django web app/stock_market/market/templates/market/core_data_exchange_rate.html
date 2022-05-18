@@ -1,0 +1,13 @@
+{% extends 'market/base.html' %}
+{% block content %}
+    <h1>Exchange Rate</h1><br>
+    <form action="/core_data/exchange_rate/" method="POST">
+        {% csrf_token %}
+        Symbol(from/to): <input type="text" name="symbol" id="symbol" required><br><br>
+        <button type="submit">Submit</button><br><br>
+    </form>
+    {% if output %}
+        <p>Symbol: {{output.symbol}}</p>
+        <p>Rate: {{output.rate}}</p>
+    {% endif %}
+{% endblock %}

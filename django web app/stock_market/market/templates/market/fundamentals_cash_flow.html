@@ -1,0 +1,114 @@
+{% extends 'market/base.html' %}
+{% block content %}
+    <h1>Cash Flow</h1>
+    {% if output %}
+        <p>Symbol: {{output.symbol}}</p>
+        <div style="display:inline;">
+            <button name="annual_reports" id="annual_reports" onclick="toggleDisplay('annual');">Annual Reports</button>
+            <button name="quarterly_reports" id="quarterly_reports" onclick="toggleDisplay('quarterly');">Quarterly Reports</button><br><br>
+        </div>
+        <div id="annual">
+            <h2 style="margin:3%;">Annual Reports:</h2>
+            {% for v in output.annualReports %}
+            <div style="background: rgb(11,8,66);
+            background: linear-gradient(90deg, rgba(11,8,66,1) 14%, rgba(41,41,213,1) 100%, rgba(0,212,255,1) 100%);
+            width: auto;
+            height: auto;
+            margin: 3%;
+            padding: 2%;">
+                <u style="font-size: 20px; color: white;">fiscalDateEnding: {{v.fiscalDateEnding}}</u>
+                <p style="font-size: 20px; color: white;">reportedCurrency: {{v.reportedCurrency}}</p>
+                <p style="font-size: 20px; color: white;">operatingCashflow: {{v.operatingCashflow}}</p>
+                <p style="font-size: 20px; color: white;">paymentForOperatingActivities: {{v.paymentForOperatingActivities}}</p>
+                <p style="font-size: 20px; color: white;">proceedsFromOperatingActivities: {{v.proceedsFromOperatingActivities}}</p>
+                <p style="font-size: 20px; color: white;">changeInOperatingLiabilities: {{v.changeInOperatingLiabilities}}</p>
+                <p style="font-size: 20px; color: white;">changeInOperatingAssets: {{v.changeInOperatingAssets}}</p>
+                <p style="font-size: 20px; color: white;">depreciationDepletionAndAmortization: {{v.depreciationDepletionAndAmortization}}</p>
+                <p style="font-size: 20px; color: white;">capitalExpenditures: {{v.capitalExpenditures}}</p>
+                <p style="font-size: 20px; color: white;">changeInReceivables: {{v.changeInReceivables}}</p>
+                <p style="font-size: 20px; color: white;">changeInInventory: {{v.changeInInventory}}</p>
+                <p style="font-size: 20px; color: white;">profitLoss: {{v.profitLoss}}</p>
+                <p style="font-size: 20px; color: white;">cashflowFromInvestment: {{v.cashflowFromInvestment}}</p>
+                <p style="font-size: 20px; color: white;">cashflowFromFinancing: {{v.cashflowFromFinancing}}</p>
+                <p style="font-size: 20px; color: white;">proceedsFromRepaymentsOfShortTermDebt: {{v.proceedsFromRepaymentsOfShortTermDebt}}</p>
+                <p style="font-size: 20px; color: white;">paymentsForRepurchaseOfCommonStock: {{v.paymentsForRepurchaseOfCommonStock}}</p>
+                <p style="font-size: 20px; color: white;">paymentsForRepurchaseOfEquity: {{v.paymentsForRepurchaseOfEquity}}</p>
+                <p style="font-size: 20px; color: white;">paymentsForRepurchaseOfPreferredStock: {{v.paymentsForRepurchaseOfPreferredStock}}</p>
+                <p style="font-size: 20px; color: white;">dividendPayout: {{v.dividendPayout}}</p>
+                <p style="font-size: 20px; color: white;">dividendPayoutCommonStock: {{v.dividendPayoutCommonStock}}</p>
+                <p style="font-size: 20px; color: white;">dividendPayoutPreferredStock: {{v.dividendPayoutPreferredStock}}</p>
+                <p style="font-size: 20px; color: white;">proceedsFromIssuanceOfCommonStock: {{v.proceedsFromIssuanceOfCommonStock}}</p>
+                <p style="font-size: 20px; color: white;">proceedsFromIssuanceOfLongTermDebtAndCapitalSecuritiesNet: {{v.proceedsFromIssuanceOfLongTermDebtAndCapitalSecuritiesNet}}</p>
+                <p style="font-size: 20px; color: white;">proceedsFromIssuanceOfPreferredStock: {{v.proceedsFromIssuanceOfPreferredStock}}</p>
+                <p style="font-size: 20px; color: white;">proceedsFromRepurchaseOfEquity: {{v.proceedsFromRepurchaseOfEquity}}</p> <p style="font-size: 20px; color: white;">netIncomeFromContinuingOperations: {{v.netIncomeFromContinuingOperations}}</p>
+                <p style="font-size: 20px; color: white;">proceedsFromSaleOfTreasuryStock: {{v.proceedsFromSaleOfTreasuryStock}}</p>
+                <p style="font-size: 20px; color: white;">changeInCashAndCashEquivalents: {{v.changeInCashAndCashEquivalents}}</p>
+                <p style="font-size: 20px; color: white;">changeInExchangeRate: {{v.changeInExchangeRate}}</p>
+                <p style="font-size: 20px; color: white;">netIncome: {{v.netIncome}}</p>
+            </div>
+            {% endfor %}<br><br>
+        </div>
+
+        <div id="quarterly" style="display:none;">
+            <h2 style="margin:3%;">Quarterly Reports:</h2>
+            {% for v in output.quarterlyReports %}
+            <div style="background: rgb(11,8,66);
+            background: linear-gradient(90deg, rgba(11,8,66,1) 14%, rgba(41,41,213,1) 100%, rgba(0,212,255,1) 100%);
+            width: auto;
+            height: auto;
+            margin: 3%;
+            padding: 2%;">
+                <u style="font-size: 20px; color: white;">fiscalDateEnding: {{v.fiscalDateEnding}}</u>
+                <p style="font-size: 20px; color: white;">reportedCurrency: {{v.reportedCurrency}}</p>
+                <p style="font-size: 20px; color: white;">operatingCashflow: {{v.operatingCashflow}}</p>
+                <p style="font-size: 20px; color: white;">paymentForOperatingActivities: {{v.paymentForOperatingActivities}}</p>
+                <p style="font-size: 20px; color: white;">proceedsFromOperatingActivities: {{v.proceedsFromOperatingActivities}}</p>
+                <p style="font-size: 20px; color: white;">changeInOperatingLiabilities: {{v.changeInOperatingLiabilities}}</p>
+                <p style="font-size: 20px; color: white;">changeInOperatingAssets: {{v.changeInOperatingAssets}}</p>
+                <p style="font-size: 20px; color: white;">depreciationDepletionAndAmortization: {{v.depreciationDepletionAndAmortization}}</p>
+                <p style="font-size: 20px; color: white;">capitalExpenditures: {{v.capitalExpenditures}}</p>
+                <p style="font-size: 20px; color: white;">changeInReceivables: {{v.changeInReceivables}}</p>
+                <p style="font-size: 20px; color: white;">changeInInventory: {{v.changeInInventory}}</p>
+                <p style="font-size: 20px; color: white;">profitLoss: {{v.profitLoss}}</p>
+                <p style="font-size: 20px; color: white;">cashflowFromInvestment: {{v.cashflowFromInvestment}}</p>
+                <p style="font-size: 20px; color: white;">cashflowFromFinancing: {{v.cashflowFromFinancing}}</p>
+                <p style="font-size: 20px; color: white;">proceedsFromRepaymentsOfShortTermDebt: {{v.proceedsFromRepaymentsOfShortTermDebt}}</p>
+                <p style="font-size: 20px; color: white;">paymentsForRepurchaseOfCommonStock: {{v.paymentsForRepurchaseOfCommonStock}}</p>
+                <p style="font-size: 20px; color: white;">paymentsForRepurchaseOfEquity: {{v.paymentsForRepurchaseOfEquity}}</p>
+                <p style="font-size: 20px; color: white;">paymentsForRepurchaseOfPreferredStock: {{v.paymentsForRepurchaseOfPreferredStock}}</p>
+                <p style="font-size: 20px; color: white;">dividendPayout: {{v.dividendPayout}}</p>
+                <p style="font-size: 20px; color: white;">dividendPayoutCommonStock: {{v.dividendPayoutCommonStock}}</p>
+                <p style="font-size: 20px; color: white;">dividendPayoutPreferredStock: {{v.dividendPayoutPreferredStock}}</p>
+                <p style="font-size: 20px; color: white;">proceedsFromIssuanceOfCommonStock: {{v.proceedsFromIssuanceOfCommonStock}}</p>
+                <p style="font-size: 20px; color: white;">proceedsFromIssuanceOfLongTermDebtAndCapitalSecuritiesNet: {{v.proceedsFromIssuanceOfLongTermDebtAndCapitalSecuritiesNet}}</p>
+                <p style="font-size: 20px; color: white;">proceedsFromIssuanceOfPreferredStock: {{v.proceedsFromIssuanceOfPreferredStock}}</p>
+                <p style="font-size: 20px; color: white;">proceedsFromRepurchaseOfEquity: {{v.proceedsFromRepurchaseOfEquity}}</p> <p style="font-size: 20px; color: white;">netIncomeFromContinuingOperations: {{v.netIncomeFromContinuingOperations}}</p>
+                <p style="font-size: 20px; color: white;">proceedsFromSaleOfTreasuryStock: {{v.proceedsFromSaleOfTreasuryStock}}</p>
+                <p style="font-size: 20px; color: white;">changeInCashAndCashEquivalents: {{v.changeInCashAndCashEquivalents}}</p>
+                <p style="font-size: 20px; color: white;">changeInExchangeRate: {{v.changeInExchangeRate}}</p>
+                <p style="font-size: 20px; color: white;">netIncome: {{v.netIncome}}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+    {% endif %}
+
+    <script>
+        function toggleDisplay(id){
+            var x=document.getElementById(id);
+
+            if(x.id == "annual"){
+                var y=document.getElementById('quarterly');
+                y.style.display = "none";
+                x.style.display = "block";
+            }
+            else
+            {
+                var y=document.getElementById('annual');
+                y.style.display = "none";
+                x.style.display = "block";
+            }
+        }
+    </script>
+
+{% endblock %}

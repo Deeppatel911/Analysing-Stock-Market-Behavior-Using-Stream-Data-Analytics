@@ -1,0 +1,23 @@
+{% extends 'market/base.html' %}
+{% block content %}
+    <h1>SEC Filings</h1><br>
+    {% if output %}
+        {% for v in output %}
+            <div style="background: rgb(11,8,66);
+            background: linear-gradient(90deg, rgba(11,8,66,1) 14%, rgba(41,41,213,1) 100%, rgba(0,212,255,1) 100%);
+            width: auto;
+            height: auto;
+            margin: 3%;
+            padding: 2%;">
+                <p style="font-size: 20px; color: white;">accessNumber: {{v.accessNumber}}</p>
+                <p style="font-size: 20px; color: white;">symbol: {{v.symbol}}</p>
+                <p style="font-size: 20px; color: white;">cik: {{v.cik}}</p>
+                <p style="font-size: 20px; color: white;">filledDate: {{v.filledDate}}</p>
+                <p style="font-size: 20px; color: white;">form: {{v.form}}</p>
+                <p style="font-size: 20px; color: white;">acceptedDate: {{v.acceptedDate}}</p>
+                <p style="font-size: 20px; color: white;">reportUrl: {{v.reportUrl}}</p>
+                <p style="font-size: 20px; color: white;">filingUrl: {{v.filingUrl}}</p>
+                </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

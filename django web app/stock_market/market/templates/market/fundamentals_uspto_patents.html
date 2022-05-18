@@ -1,0 +1,37 @@
+{% extends 'market/base.html' %}
+{% block content %}
+    <h1 style="margin:3%;text-align:center;">Uspto Patents</h1><br>
+    <form action="{% url 'uspto_patents' symbol %}" method="POST">
+        {% csrf_token %}
+        From Date: <input type="text" name="_from" id="_from" placeholder="YYYY-MM-DD" required><br><br>
+        To Date: <input type="text" name="_to" id="_to" placeholder="YYYY-MM-DD" required><br><br>
+        <button type="submit">submit</button><br><br>
+    </form>
+
+    {% if output %}
+    <h4 style="text-align:left;">Symbol: {{output.symbol}}</h4>
+        {% if output.data %}
+            {% for v in output.data %}
+            <div style="background: rgb(11,8,66);
+            background: linear-gradient(90deg, rgba(11,8,66,1) 14%, rgba(41,41,213,1) 100%, rgba(0,212,255,1) 100%);
+            width: auto;
+            height: auto;
+            margin: 3%;
+            padding: 2%;">
+            <p style="font-size: 20px; color: white;">Application Number: {{v.applicationNumber}}</p>
+            <p style="font-size: 20px; color: white;">Company Filling Name: {{v.companyFilingName}}</p>
+            <p style="font-size: 20px; color: white;">Description: {{v.description}}</p>
+            <p style="font-size: 20px; color: white;">Filing Date: {{v.filingDate}}</p>
+            <p style="font-size: 20px; color: white;">Filing Status: {{v.filingStatus}}</p>
+            <p style="font-size: 20px; color: white;">Patent Number: {{v.patentNumber}}</p>
+            <p style="font-size: 20px; color: white;">Patent Type: {{v.patentType}}</p>
+            <p style="font-size: 20px; color: white;">publicationDate: {{v.publicationDate}}</p>
+            <a style="font-size: 20px; color: white;" href = "{{v.url}}">url: show Patent</a>
+            
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No patents</p>
+        {% endif %}
+    {% endif %}
+{% endblock %}

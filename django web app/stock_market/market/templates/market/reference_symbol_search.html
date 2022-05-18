@@ -1,0 +1,37 @@
+{% extends 'market/base.html' %}
+{% block content %}
+    {% if symbol_search %}
+        {% for v in symbol_search %}
+            {% if v.exchange == "NASDAQ" or v.exchange == "NYSE" %}
+            <div style="background: rgb(11,8,66);
+            background: linear-gradient(90deg, rgba(11,8,66,1) 14%, rgba(41,41,213,1) 100%, rgba(0,212,255,1) 100%);
+            width: auto;
+            height: auto;
+            margin: 3%;
+            padding: 2%;">
+                <a style="font-size: 25px;" href="{% url 'stock_details' v.exchange v.symbol %}">Symbol: {{v.symbol}}</a>
+                <p style="font-size: 20px; color: white;">Name: {{v.instrument_name}}</p>
+                <p style="font-size: 20px; color: white;">Currency: {{v.currency}}</p>
+                <p style="font-size: 20px; color: white;">Exchange: {{v.exchange}}</p>
+                <p style="font-size: 20px; color: white;">Country: {{v.country}}</p>
+                <p style="font-size: 20px; color: white;">Type: {{v.instrument_type}}</p>
+            </div>
+            {% endif %}
+
+            {% if v.exchange == "PHYSICAL CURRENCY" %}
+            <div style="background: rgb(11,8,66);
+            background: linear-gradient(90deg, rgba(11,8,66,1) 14%, rgba(41,41,213,1) 100%, rgba(0,212,255,1) 100%);
+            width: auto;
+            height: auto;
+            margin: 3%;
+            padding: 2%;">
+                <a style="font-size: 25px;" href="{% url 'forex_details' v.exchange from_symbol to_symbol %}">Symbol: {{v.symbol}}</a>
+                <p style="font-size: 20px; color: white;">Name: {{v.instrument_name}}</p>
+                <p style="font-size: 20px; color: white;">Exchange: {{v.exchange}}</p>
+                <p style="font-size: 20px; color: white;">Type: {{v.instrument_type}}</p>
+            </div>
+            {% endif %}
+
+        {% endfor %}
+    {% endif %}
+{% endblock %}

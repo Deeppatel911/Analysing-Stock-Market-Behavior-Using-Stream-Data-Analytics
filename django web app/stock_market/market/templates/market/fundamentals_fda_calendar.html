@@ -1,0 +1,19 @@
+{% extends 'market/base.html' %}
+{% block content %}
+    <h1>FDA Calendar</h1><br>
+    {% if output %}
+        {% for v in output %}
+            <div style="background: rgb(11,8,66);
+            background: linear-gradient(90deg, rgba(11,8,66,1) 14%, rgba(41,41,213,1) 100%, rgba(0,212,255,1) 100%);
+            width: auto;
+            height: auto;
+            margin: 3%;
+            padding: 2%;">
+                <p style="font-size: 20px; color: white;">fromDate: {{v.fromDate}}</p>
+                <p style=" font-size: 20px; color: white;">toDate: {{v.toDate}}</p>
+                <p style="font-size: 20px; color: white;">eventDescription: {{v.eventDescription}}</p>
+                <p style=" font-size: 20px; color: white;">url: {{v.url}}</p>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

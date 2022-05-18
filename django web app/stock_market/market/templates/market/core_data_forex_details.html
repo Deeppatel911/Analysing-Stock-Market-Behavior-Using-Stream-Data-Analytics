@@ -1,0 +1,141 @@
+{% extends 'market/base.html' %}
+{% block content %}
+<style>
+
+.overlay {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0, 0.9);
+  overflow-x: hidden;
+  transition: 0.5s;
+}
+
+.overlay-content {
+  position: relative;
+  top: 15%;
+  width: 100%;
+  text-align: center;
+}
+
+.overlay a {
+  padding: 8px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.overlay a:hover, .overlay a:focus {
+  color: #f1f1f1;
+}
+
+.overlay .closebtn {
+  position: absolute;
+  top: 20px;
+  right: 45px;
+  font-size: 60px;
+}
+
+@media screen and (max-height: 450px) {
+  .overlay a {font-size: 20px}
+  .overlay .closebtn {
+  font-size: 40px;
+  top: 15px;
+  right: 35px;
+  }
+}
+</style>
+
+
+    <div>
+        <div>
+            <div id="myNav" class="overlay">
+              <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+              <nav class="overlay-content">
+                  <a style="font-size:56px;" href="{% url 'market_home' %}">Stock Market</a>
+
+                  <a href="{% url 'technical_indicators_forex' from_symbol to_symbol %}">Technical Indicators</a>
+                  <a href="{% url 'time_series_forex' from_symbol to_symbol %}">Time Series</a>
+                  <a href="{% url 'price_predictor_forex' from_symbol to_symbol %}">Price Predictor</a>
+              </nav>
+            </div>
+
+            <div style="margin:3%;">
+                <a style="font-size:30px;color:black;" href="{% url 'forex_details' quote.exchange from_symbol to_symbol %}">Forex Details</a>
+                <span style="font-size:30px;margin:0% 0% 0% 82%;cursor:pointer" onclick="openNav()">&#9776;</span>
+            </div>
+
+          </div>
+
+
+        <div style="margin:3%;padding:1% 0% 0% 0%;display:flex;flex-direction:row;">
+            <div>
+                <img src="{{logo.logo_base}}" height="75px" width="75px" alt="Logo Base">
+                <img src="{{logo.logo_quote}}" height="75px" width="75px" alt="Logo Quote">
+            </div>
+
+            <div style="flex-wrap:wrap;justify-content:space-around;">
+                <h1>{{quote.name}}</h1>
+                <p>{{from_symbol}}/{{to_symbol}}</p>
+                <p>{{exchange}}</p>
+            </div>
+        </div>
+
+        <h2 style="margin:3%;text-align:center;">Exchange Rate: {{price}}</h2>
+
+        <div style="margin:3%;">
+            <h2 style="text-align:center;margin:3% 0% 3% 0%;">Quote</h2>
+            <p>Datetime: {{quote.datetime}}</p>
+
+            <div class="row">
+                <div class="col">Open: {{quote.open}}</div>
+                <div class="col">High: {{quote.high}}</div>
+                <div class="col">Low: {{quote.low}}</div>
+            </div>
+
+            <div class="row">
+                <div class="col">Close: {{quote.close}}</div>
+                <div class="col">Previous_Close: {{quote.previous_close}}</div>
+                <div class="col">Change: {{quote.change}}</div>
+            </div>
+
+            <div class="row">
+                <div class="col">Percent_Change: {{quote.percent_change}}</div>
+            </div><br>
+
+            <p>Is Market Open: {{quote.is_market_open}}</p><br>
+
+            <p>Fifty_Two_Week: </p>
+            <div class="row">
+                <div class="col">Low: {{quote.fifty_two_week.low}}</div>
+                <div class="col">High: {{quote.fifty_two_week.high}}</div>
+                <div class="col">Low Change: {{quote.fifty_two_week.low_change}}</div>
+            </div>
+
+            <div class="row">
+                <div class="col">High Change: {{quote.fifty_two_week.high_change}}</div>
+                <div class="col">Low Change Percent: {{quote.fifty_two_week.low_change_percent}}</div>
+                <div class="col">High Change Percent: {{quote.fifty_two_week.high_change_percent}}</div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        function openNav() {
+          document.getElementById("myNav").style.width = "100%";
+        }
+
+        function closeNav() {
+          document.getElementById("myNav").style.width = "0%";
+        }
+    </script>
+
+{% endblock %}

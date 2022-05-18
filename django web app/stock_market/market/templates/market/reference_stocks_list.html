@@ -1,0 +1,49 @@
+{% extends 'market/base.html' %}
+{% block content %}
+    <h1 style="margin:3%;text-align:center;">Stocks List</h1>
+
+    {% if stocks_list %}
+        {% for v in stocks_list %}
+        <a href="{% url 'stock_details' v.3 v.0 %}">
+            <div style="background: rgb(11,8,66);
+                background: linear-gradient(90deg, rgba(11,8,66,1) 14%, rgba(41,41,213,1) 100%, rgba(0,212,255,1) 100%);
+                width: auto;
+                height: auto;
+                margin: 3%;
+                padding: 2%;">
+                <p style="font-size: 25px; color: white;">{{v.0}}</p>
+                <p style="font-size: 20px; color: white;">Name: {{v.1}}</p>
+                <p style="font-size: 20px; color: white;">Currency: {{v.2}}</p>
+                <p style="font-size: 20px; color: white;">Exchange: {{v.3}}</p>
+                <p style="font-size: 20px; color: white;">Country: {{v.4}}</p>
+                <p style="font-size: 20px; color: white;">Type: {{v.5}}</p>
+            </div>
+        </a>
+        {% endfor %}
+    {% endif %}
+
+
+    <div style="margin:3%;">
+            {% if stocks_list.has_previous %}
+                <a class="btn btn-outline-primary mb-4" href="/reference/{{stocks_list.0.3}}/stocks_list/?page=1">First</a>
+                <a class="btn btn-outline-primary mb-4" href="/reference/{{stocks_list.0.3}}/stocks_list/?page={{stocks_list.previous_page_number}}">Previous</a>
+            {% endif %}
+
+            {% for num in stocks_list.paginator.page_range %}
+                {% if stocks_list.number == num %}
+                    <a class="btn btn-primary mb-4" href="/reference/{{stocks_list.0.3}}/stocks_list/?page={{num}}">{{num}}</a>
+
+                {% elif num > stocks_list.number|add:'-3' and num < stocks_list.number|add:'3'  %}
+                    <a class="btn btn-outline-primary mb-4" href="/reference/{{stocks_list.0.3}}/stocks_list/?page={{num}}">{{num}}</a>
+
+                {% endif %}
+            {% endfor %}
+
+            {% if stocks_list.has_next %}
+                <a class="btn btn-outline-primary mb-4" href="/reference/{{stocks_list.0.3}}/stocks_list/?page={{stocks_list.next_page_number}}">Next</a>
+                <a class="btn btn-outline-primary mb-4" href="/reference/{{stocks_list.0.3}}/stocks_list/?page={{stocks_list.paginator.num_pages}}">Last</a>
+            {% endif %}
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'market/base.html' %}
+{% block content %}
+    <h1>Earnings Calendar</h1><br>
+    {% for v in earnings %}
+        <div style="background: rgb(11,8,66);
+            background: linear-gradient(90deg, rgba(11,8,66,1) 14%, rgba(41,41,213,1) 100%, rgba(0,212,255,1) 100%);
+            width: auto;
+            height: auto;
+            margin: 3%;
+            padding: 2%;">
+        <p style="font-size: 20px; color: white;">Symbol: {{v.0}}</p>
+        <p style="font-size: 20px; color: white;">Name: {{v.1}}</p>
+        <p style="font-size: 20px; color: white;">Report Date: {{v.2}}</p>
+        <p style="font-size: 20px; color: white;">Fiscal Date Ending: {{v.3}}</p>
+        <p style="font-size: 20px; color: white;">Estimate: {{v.4}}</p>
+        <p style="font-size: 20px; color: white;">Currency: {{v.5}}</p>
+        </div>
+    {% endfor %}
+
+    {% if earnings.has_previous %}
+        <a class="btn btn-outline-primary mb-4" href="/fundamentals/earnings/?page=1">First</a>
+        <a class="btn btn-outline-primary mb-4" href="/fundamentals/earnings/?page={{earnings.previous_page_number}}">Previous</a>
+    {% endif %}
+
+    {% for num in earnings.paginator.page_range %}
+        {% if earnings.number == num %}
+            <a class="btn btn-primary mb-4" href="/fundamentals/earnings/?page={{num}}">{{num}}</a>
+
+        {% elif num > earnings.number|add:'-3' and num < earnings.number|add:'3'  %}
+            <a class="btn btn-outline-primary mb-4" href="/fundamentals/earnings/?page={{num}}">{{num}}</a>
+
+        {% endif %}
+
+    {% endfor %}
+
+    {% if earnings.has_next %}
+            <a class="btn btn-outline-primary mb-4" href="/fundamentals/earnings/?page={{earnings.next_page_number}}">Next</a>
+            <a class="btn btn-outline-primary mb-4" href="/fundamentals/earnings/?page={{earnings.paginator.num_pages}}">Last</a>
+    {% endif %}
+
+{% endblock %}

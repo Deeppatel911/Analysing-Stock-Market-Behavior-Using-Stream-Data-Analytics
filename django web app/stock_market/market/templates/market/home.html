@@ -1,0 +1,95 @@
+{% extends 'market/base.html' %}
+{% load static %}
+{% block content %}
+
+    <header class="site-navbar" role="banner">
+
+      <div class="container">
+        <div class="row align-items-center">
+
+          <div class="col-11 col-xl-2">
+            <h1 class="mb-0 site-logo"><a href="{% url 'market_home' %}" class="text-white mb-0">Stock Market</a></h1>
+          </div>
+          <div class="col-12 col-md-10 d-none d-xl-block">
+            <nav class="site-navigation position-relative text-right" role="navigation">
+
+              <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
+
+                <li class="has-children">
+                  <a href="#"><span>Reference Data</span></a>
+                  <ul class="dropdown arrow-top">
+                    <li><a href="{% url 'exchange_list' %}">Exchange List</a></li>
+                    <li><a href="{% url 'forex_list' %}">Forex Pair List</a></li>
+                    <li class="has-children">
+                      <a href="#">Stocks List</a>
+                      <ul class="dropdown">
+                        <li><a href="{% url 'stocks_list' 'NASDAQ' %}">NASDAQ</a></li>
+                        <li><a href="{% url 'stocks_list' 'NYSE' %}">NYSE</a></li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+
+
+                <li class="has-children">
+                  <a href="#"><span>Core Data</span></a>
+                  <ul class="dropdown arrow-top">
+                    <li><a href="{% url 'currency_conversion' %}">Currency Conversion</a></li>
+                    <li><a href="{% url 'exchange_rate' %}">Exchange Rate</a></li>
+                  </ul>
+                </li>
+
+                <li class="has-children">
+                  <a href="#"><span>Fundamentals</span></a>
+                  <ul class="dropdown arrow-top">
+                    <li><a href="{% url 'earnings' %}">Earnings Calendar</a></li>
+                    <li><a href="{% url 'fda_calendar' %}">FDA Calendar</a></li>
+                    <li><a href="{% url 'ipo' %}">IPO Calendar</a></li>
+                    <li><a href="{% url 'market_news' %}">Market News</a></li>
+                  </ul>
+                </li>
+
+                <li class="has-children">
+                  <a href="#"><span>Economic Indicators</span></a>
+                  <ul class="dropdown arrow-top">
+                    <li><a href="{% url 'economic_indicators' 'cpi' %}">CPI</a></li>
+                    <li><a href="{% url 'economic_indicators' 'federal_funds_rate' %}">Federal Funds Rate</a></li>
+                    <li><a href="{% url 'economic_indicators' 'gdp' %}">GDP</a></li>
+                    <li><a href="{% url 'economic_indicators' 'inflation_expectation' %}">Inflation Expectation</a></li>
+                    <li><a href="{% url 'economic_indicators' 'treasury_yield' %}">Treasury Yield</a></li>
+                    <li><a href="{% url 'economic_indicators' 'unemployment_rate' %}">Unemployment Rate</a></li>
+                  </ul>
+                </li>
+
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'profile' %}"><span>Profile</span></a></li>
+                <li><a href="{% url 'logout' %}"><span>Logout</span></a></li>
+                {% else %}
+                <li><a href="{% url 'login' %}"><span>Login</span></a></li>
+                <li><a href="{% url 'register' %}"><span>Register</span></a></li>
+                {% endif %}
+
+              </ul>
+            </nav>
+          </div>
+
+
+          <div class="d-inline-block d-xl-none ml-md-0 mr-auto py-3" style="position: relative; top: 3px;"><a href="#" class="site-menu-toggle js-menu-toggle text-white"><span class="icon-menu h3"></span></a></div>
+
+        </div>
+
+      </div>
+
+    </header>
+
+    <div class="hero" style="background-image: url('{% static 'market/images/stock.png' %}');">
+    <div>
+        <form action="/reference/symbol_search/" method="POST">
+        {% csrf_token %}
+        <input style="padding:0.3%;margin:15% 0 0 40%;" type="text" name="symbol" id="symbol" placeholder="Symbol" required>
+        <button style="margin:0 0 0.3% 0;" class="btn btn-primary" type="submit">Search</button><br><br>
+        </form>
+    </div>
+
+    </div>
+{% endblock %}

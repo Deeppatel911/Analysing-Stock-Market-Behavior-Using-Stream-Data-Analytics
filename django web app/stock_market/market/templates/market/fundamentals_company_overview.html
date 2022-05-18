@@ -1,0 +1,28 @@
+{% extends 'market/base.html' %}
+{% block content %}
+    <h1 style="margin:2%;text-align:center;">Company Overview</h1><br>
+    {% if output %}
+    <div style="background: rgb(11,8,66);
+            background: linear-gradient(90deg, rgba(11,8,66,1) 14%, rgba(41,41,213,1) 100%, rgba(0,212,255,1) 100%);
+            width: auto;
+            height: auto;
+            margin: 3%;
+            padding: 2%;">
+    <p style="font-size: 20px; color: white;">Symbol: {{output}}</p>
+    <p style="font-size: 20px; color: white;">Asset Type: {{output.AssetType}}</p>
+    <p style="font-size: 20px; color: white;">Name: {{output.Name}}</p>
+    <p style="font-size: 20px; color: white;">Description: {{output.Description}}</p>
+    <p style="font-size: 20px; color: white;">Country: {{output.Country}}</p>
+    <p style="font-size: 20px; color: white;">Exchange: {{output.Exchange}}</p>
+    <p style="font-size: 20px; color: white;">Currency: {{output.Currency}}</p>
+    <p style="font-size: 20px; color: white;">Sector: {{output.Sector}}</p>
+    <p style="font-size: 20px; color: white;">Market Capitalization: {{output.MarketCapitalization}}</p>
+    <p style="font-size: 20px; color: white;">Profit Margin: {{output.ProfitMargin}}</p>
+    <p style="font-size: 20px; color: white;">Gross Profit TTM: {{output.GrossProfitTTM}}</p>
+    <p style="font-size: 20px; color: white;">52 Week Low: {{output.52WeekLow}}</p>
+    <p style="font-size: 20px; color: white;">52 Week High: {{output.52WeekHigh}}</p>
+    <p style="color:white;">{{output}}</p>
+    </div>
+ 
+    {% endif %}
+{% endblock %}

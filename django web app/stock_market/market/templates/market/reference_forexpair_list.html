@@ -1,0 +1,44 @@
+{% extends 'market/base.html' %}
+{% block content %}
+<div>
+    <h1 style="margin:3%;text-align:center;">Forex Pairs List</h1>
+    {% for v in forex_pairs %}
+    <div style="background: rgb(11,8,66);
+            background: linear-gradient(90deg, rgba(11,8,66,1) 14%, rgba(41,41,213,1) 100%, rgba(0,212,255,1) 100%);
+            width: auto;
+            height: auto;
+            margin: 3%;
+            padding: 2%;">
+        <p style="font-size: 20px; color: white;">Symbol: {{v.0}}</p>
+        <p style="font-size: 20px; color: white;">Currency Group: {{v.1}}</p>
+        <p style="font-size: 20px; color: white;">Currency Base:  {{v.2}}</p>
+        <p style="font-size: 20px; color: white;">Currency Quote: {{v.3}}</p>
+    </div>
+    {% endfor %}
+
+    <div style="margin:3%;">
+        {% if forex_pairs.has_previous %}
+            <a class="btn btn-outline-primary mb-4" href="/reference/forex_pair_list/?page=1">First</a>
+            <a class="btn btn-outline-primary mb-4" href="/reference/forex_pair_list/?page={{forex_pairs.previous_page_number}}">Previous</a>
+        {% endif %}
+
+        {% for num in forex_pairs.paginator.page_range %}
+            {% if forex_pairs.number == num %}
+                <a class="btn btn-primary mb-4" href="/reference/forex_pair_list/?page={{num}}">{{num}}</a>
+
+            {% elif num > forex_pairs.number|add:'-3' and num < forex_pairs.number|add:'3'  %}
+                <a class="btn btn-outline-primary mb-4" href="/reference/forex_pair_list/?page={{num}}">{{num}}</a>
+
+            {% endif %}
+
+        {% endfor %}
+
+        {% if forex_pairs.has_next %}
+                <a class="btn btn-outline-primary mb-4" href="/reference/forex_pair_list/?page={{forex_pairs.next_page_number}}">Next</a>
+                <a class="btn btn-outline-primary mb-4" href="/reference/forex_pair_list/?page={{forex_pairs.paginator.num_pages}}">Last</a>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}

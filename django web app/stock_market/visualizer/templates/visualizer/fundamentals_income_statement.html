@@ -1,0 +1,377 @@
+{% extends 'market/base.html' %}
+{% block content %}
+    <div>
+        <h1 style="margin:3%;text-align:center;">Income Statement</h1>
+        <div style="margin:3%;">
+            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" role="tab" type="button" name="annual_reports" id="annual_reports" onclick="toggleDisplay('annual');">Annual Reports</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" role="tab" type="button" name="quarterly_reports" id="quarterly_reports" onclick="toggleDisplay('quarterly');">Quarterly Reports</button>
+                </li>
+            </ul>
+        </div>
+
+        <div style="margin:3%;" id="graphArea">
+            <canvas id="annual"></canvas>
+            <canvas style="display:none;" id="quarterly"></canvas>
+        </div>
+
+        <div style="background: rgb(11,8,66);
+                background: linear-gradient(90deg, rgba(11,8,66,1) 14%, rgba(41,41,213,1) 100%, rgba(0,212,255,1) 100%);
+                width: auto;
+                height: auto;
+                margin: 3%;
+                padding: 2%;">
+            <table class="table table-hover table-responsive" id="annual_reports_comp">
+                <tr id="annual_fiscalDateEnding">
+                    <td style="font-size: 20px; color: white;">Fiscal Date Ending</td>
+                </tr>
+                <tr id="annual_reportedCurrency">
+                    <td style="font-size: 20px; color: white;">Reported Currency</td>
+                </tr>
+                <tr id="annual_grossProfit">
+                    <td style="font-size: 20px; color: white;">Gross Profit</td>
+                </tr>
+                <tr id="annual_totalRevenue">
+                    <td style="font-size: 20px; color: white;">Total Revenue</td>
+                </tr>
+                <tr id="annual_costOfRevenue">
+                    <td style="font-size: 20px; color: white;">Cost of Revenue</td>
+                </tr>
+                <tr id="annual_costofGoodsAndServicesSold">
+                    <td style="font-size: 20px; color: white;">Cost of Goods and Services Sold</td>
+                </tr>
+                <tr id="annual_operatingIncome">
+                    <td style="font-size: 20px; color: white;">Operating Income</td>
+                </tr>
+                <tr id="annual_sellingGeneralAndAdministrative">
+                    <td style="font-size: 20px; color: white;">Selling General And Administrative</td>
+                </tr>
+                <tr id="annual_researchAndDevelopment">
+                    <td style="font-size: 20px; color: white;">Research and Development</td>
+                </tr>
+                <tr id="annual_operatingExpenses">
+                    <td style="font-size: 20px; color: white;">Operating Expenses</td>
+                </tr>
+                <tr id="annual_investmentIncomeNet">
+                    <td style="font-size: 20px; color: white;">Investment IncomeNet</td>
+                </tr>
+                <tr id="annual_netInterestIncome">
+                    <td style="font-size: 20px; color: white;">Net Interest Income</td>
+                </tr>
+                <tr id="annual_interestIncome">
+                    <td style="font-size: 20px; color: white;">Interest Income</td>
+                </tr>
+                <tr id="annual_interestExpense">
+                    <td style="font-size: 20px; color: white;">Interest Expense</td>
+                </tr>
+                <tr id="annual_nonInterestIncome">
+                    <td style="font-size: 20px; color: white;">Non Interest Income</td>
+                </tr>
+                <tr id="annual_otherNonOperatingIncome">
+                    <td style="font-size: 20px; color: white;">Other NonOperating Income</td>
+                </tr>
+                <tr id="annual_depreciation">
+                    <td style="font-size: 20px; color: white;">Depreciation</td>
+                </tr>
+                <tr id="annual_depreciationAndAmortization">
+                    <td style="font-size: 20px; color: white;">Depreciation and Amortization</td>
+                </tr>
+                <tr id="annual_incomeBeforeTax">
+                    <td style="font-size: 20px; color: white;">Income Before Tax</td>
+                </tr>
+                <tr id="annual_incomeTaxExpense">
+                    <td style="font-size: 20px; color: white;">Income Tax Expense</td>
+                </tr>
+                <tr id="annual_interestAndDebtExpense">
+                    <td style="font-size: 20px; color: white;">Interest and Debt Expense</td>
+                </tr>
+                <tr id="annual_netIncomeFromContinuingOperations">
+                    <td style="font-size: 20px; color: white;">Net Income From Continuing Operations</td>
+                </tr>
+                <tr id="annual_comprehensiveIncomeNetOfTax">
+                    <td style="font-size: 20px; color: white;">Comprehensive Income Net Of Tax</td>
+                </tr>
+                <tr id="annual_ebit">
+                    <td style="font-size: 20px; color: white;">EBIT</td>
+                </tr>
+                <tr id="annual_ebitda">
+                    <td style="font-size: 20px; color: white;">EBITDA</td>
+                </tr>
+                <tr id="annual_netIncome">
+                    <td style="font-size: 20px; color: white;">Net Income</td>
+                </tr>
+            </table>
+
+            <table class="table table-hover table-responsive" style="display:none;" id="quarterly_reports_comp">
+                <tr id="quarterly_fiscalDateEnding">
+                    <td style="font-size: 20px; color: white;">Fiscal Date Ending</td>
+                </tr>
+                <tr id="quarterly_reportedCurrency">
+                    <td style="font-size: 20px; color: white;">Reported Currency</td>
+                </tr>
+                <tr id="quarterly_grossProfit">
+                    <td style="font-size: 20px; color: white;">Gross Profit</td>
+                </tr>
+                <tr id="quarterly_totalRevenue">
+                    <td style="font-size: 20px; color: white;">Total Revenue</td>
+                </tr>
+                <tr id="quarterly_costOfRevenue">
+                    <td style="font-size: 20px; color: white;">Cost of Revenue</td>
+                </tr>
+                <tr id="quarterly_costofGoodsAndServicesSold">
+                    <td style="font-size: 20px; color: white;">Cost of Goods and Services Sold</td>
+                </tr>
+                <tr id="quarterly_operatingIncome">
+                    <td style="font-size: 20px; color: white;">Operating Income</td>
+                </tr>
+                <tr id="quarterly_sellingGeneralAndAdministrative">
+                    <td style="font-size: 20px; color: white;">Selling General And Administrative</td>
+                </tr>
+                <tr id="quarterly_researchAndDevelopment">
+                    <td style="font-size: 20px; color: white;">Research and Development</td>
+                </tr>
+                <tr id="quarterly_operatingExpenses">
+                    <td style="font-size: 20px; color: white;">Operating Expenses</td>
+                </tr>
+                <tr id="quarterly_investmentIncomeNet">
+                    <td style="font-size: 20px; color: white;">Investment IncomeNet</td>
+                </tr>
+                <tr id="quarterly_netInterestIncome">
+                    <td style="font-size: 20px; color: white;">Net Interest Income</td>
+                </tr>
+                <tr id="quarterly_interestIncome">
+                    <td style="font-size: 20px; color: white;">Interest Income</td>
+                </tr>
+                <tr id="quarterly_interestExpense">
+                    <td style="font-size: 20px; color: white;">Interest Expense</td>
+                </tr>
+                <tr id="quarterly_nonInterestIncome">
+                    <td style="font-size: 20px; color: white;">Non Interest Income</td>
+                </tr>
+                <tr id="quarterly_otherNonOperatingIncome">
+                    <td style="font-size: 20px; color: white;">Other NonOperating Income</td>
+                </tr>
+                <tr id="quarterly_depreciation">
+                    <td style="font-size: 20px; color: white;">Depreciation</td>
+                </tr>
+                <tr id="quarterly_depreciationAndAmortization">
+                    <td style="font-size: 20px; color: white;">Depreciation and Amortization</td>
+                </tr>
+                <tr id="quarterly_incomeBeforeTax">
+                    <td style="font-size: 20px; color: white;">Income Before Tax</td>
+                </tr>
+                <tr id="quarterly_incomeTaxExpense">
+                    <td style="font-size: 20px; color: white;">Income Tax Expense</td>
+                </tr>
+                <tr id="quarterly_interestAndDebtExpense">
+                    <td style="font-size: 20px; color: white;">Interest and Debt Expense</td>
+                </tr>
+                <tr id="quarterly_netIncomeFromContinuingOperations">
+                    <td style="font-size: 20px; color: white;">Net Income From Continuing Operations</td>
+                </tr>
+                <tr id="quarterly_comprehensiveIncomeNetOfTax">
+                    <td style="font-size: 20px; color: white;">Comprehensive Income Net Of Tax</td>
+                </tr>
+                <tr id="quarterly_ebit">
+                    <td style="font-size: 20px; color: white;">EBIT</td>
+                </tr>
+                <tr id="quarterly_ebitda">
+                    <td style="font-size: 20px; color: white;">EBITDA</td>
+                </tr>
+                <tr id="quarterly_netIncome">
+                    <td style="font-size: 20px; color: white;">Net Income</td>
+                </tr>
+            </table>
+
+        </div>
+
+    </div>
+
+    <script>
+        function toggleDisplay(id){
+            var x=document.getElementById(id);
+
+            if(x.id == "annual"){
+                var y=document.getElementById('quarterly');
+                var z=document.getElementById('quarterly_reports_comp');
+                var w=document.getElementById('annual_reports_comp');
+                w.style.display = "block";
+                z.style.display = "none";
+                y.style.display = "none";
+                x.style.display = "block";
+
+                var btn1=document.getElementById('annual_reports');
+                var btn2=document.getElementById('quarterly_reports');
+
+                btn2.classList.remove('active');
+                btn1.classList.add('active');
+            }
+            else
+            {
+                var y=document.getElementById('annual');
+                var z=document.getElementById('annual_reports_comp');
+                var w=document.getElementById('quarterly_reports_comp');
+                w.style.display = "block";
+                z.style.display = "none";
+                y.style.display = "none";
+                x.style.display = "block";
+
+                var btn1=document.getElementById('annual_reports');
+                var btn2=document.getElementById('quarterly_reports');
+
+                btn1.classList.remove('active');
+                btn2.classList.add('active');
+            }
+        }
+
+        $(document).ready(function(){
+            $.ajax({
+                  type:"POST",
+                  url: "/fundamentals/get_income_statement/",
+                  data: {
+                     'symbol': '{{symbol}}',
+                  },
+                  success: function (res, status) {
+                    var annual_reports_data = res['output']['annualReports'];
+                    var quarterly_reports_data = res['output']['quarterlyReports'];
+
+                    // annual reports
+                    var annual_fiscal_date_ending = [];
+                    var annual_total_revenue = [];
+                    var annual_net_income = [];
+
+                    var keys = Object.keys(annual_reports_data[0]);
+                    // console.log(keys);
+
+                    for(var i=annual_reports_data.length-1;i>=0;i--){
+                        annual_fiscal_date_ending.push(String(annual_reports_data[i]['fiscalDateEnding']));
+                        annual_total_revenue.push(Number(annual_reports_data[i]['totalRevenue']));
+                        annual_net_income.push(Number(annual_reports_data[i]['netIncome']));
+
+
+                        for(var j=0;j<keys.length;j++){
+                            $('#annual_'+keys[j]).append('<td style="font-size: 20px; color: white;">'+ annual_reports_data[i][keys[j]] +'</td>');
+                        }
+                    }
+
+                    var annualChart = document.getElementById('annual').getContext('2d');
+
+                    var annualMixedChart = new Chart(annualChart,{
+                        type: 'bar',
+                        data:{
+                            labels: annual_fiscal_date_ending,
+                            datasets:[{
+                                label: 'Total Revenue',
+                                data: annual_total_revenue,
+                                backgroundColor:'blue'
+                                },{
+                                label: 'Net Income',
+                                data: annual_net_income,
+                                backgroundColor:'orange'
+                                }
+                            ]
+                        },
+
+                        options:{
+                            responsive:true,
+                            scales:{
+                                x:{
+                                    title:{
+                                        display:true,
+                                        text: 'Annual Fiscal Date Ending',
+                                        font:{
+                                            size:15
+                                        }
+                                    }
+                                }
+                            },
+                            plugins:{
+                                title:{
+                                    display:true,
+                                    text:'Annual Reports',
+                                    font:{
+                                        size:15
+                                    }
+                                },
+                                subtitle:{
+                                    display:true,
+                                    text:'Stock - ' + '{{symbol}}'
+                                }
+                            }
+                        }
+                    });
+
+
+                    // quarterly reports
+                    var quarterly_fiscal_date_ending = [];
+                    var quarterly_total_revenue = [];
+                    var quarterly_net_income = [];
+
+                    for(var i=quarterly_reports_data.length-1;i>=0;i--){
+                        quarterly_fiscal_date_ending.push(String(quarterly_reports_data[i]['fiscalDateEnding']));
+                        quarterly_total_revenue.push(Number(quarterly_reports_data[i]['totalRevenue']));
+                        quarterly_net_income.push(Number(quarterly_reports_data[i]['netIncome']));
+
+
+                        for(var j=0;j<keys.length;j++){
+                            $('#quarterly_'+keys[j]).append('<td style="font-size: 20px; color: white;">'+ quarterly_reports_data[i][keys[j]] +'</td>');
+                        }
+                    }
+
+                    var quarterlyChart = document.getElementById('quarterly').getContext('2d');
+
+                    var quarterlyMixedChart = new Chart(quarterlyChart,{
+                        type: 'bar',
+                        data:{
+                            labels: quarterly_fiscal_date_ending,
+                            datasets:[{
+                                label: 'Total Revenue',
+                                data: quarterly_total_revenue,
+                                backgroundColor:'blue'
+                                },{
+                                label: 'Net Income',
+                                data: quarterly_net_income,
+                                backgroundColor:'orange'
+                                }
+                            ]
+                        },
+
+                        options:{
+                            responsive:true,
+                            scales:{
+                                x:{
+                                    title:{
+                                        display:true,
+                                        text: 'Quarterly Fiscal Date Ending',
+                                        font:{
+                                            size:15
+                                        }
+                                    }
+                                }
+                            },
+                            plugins:{
+                                title:{
+                                    display:true,
+                                    text:'Quarterly Reports',
+                                    font:{
+                                        size:15
+                                    }
+                                },
+                                subtitle:{
+                                    display:true,
+                                    text:'Stock - ' + '{{symbol}}'
+                                }
+                            }
+                        }
+                    });
+
+                  }
+            });
+        });
+
+    </script>
+
+{% endblock %}

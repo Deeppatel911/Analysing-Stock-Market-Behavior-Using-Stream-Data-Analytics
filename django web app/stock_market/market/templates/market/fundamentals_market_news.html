@@ -1,0 +1,46 @@
+{% extends 'market/base.html' %}
+{% block content %}
+    <div>
+        <h1 style="margin:3%;text-align:center;">Market News</h1>
+        <form style="margin:3%;" action="{% url 'market_news' %}" method="POST">
+            {% csrf_token %}
+                <div style="display:inline;">
+                <select style="width:93.8%;height:42px;margin:0% 0% 0.2% 0%;" class="custom-select" name="news_category" id="news_category">
+                    <option value="news_category">News Category</option>
+                    <option value="general">Top News</option>
+                    <option value="forex">Forex</option>
+                    <option value="crypto">Crypto</option>
+                    <option value="merger">Merger</option>
+                </select>
+                </div>
+
+            <button style="padding:0.6%;margin:0 0 0.2% 0%;" class="btn btn-primary" type="submit">Submit</button>
+        </form>
+    </div>
+
+    {% if output %}
+        {% for v in output %}
+        <a href="{{v.url}}">
+            <div style="background: rgb(11,8,66);
+            background: linear-gradient(90deg, rgba(11,8,66,1) 14%, rgba(41,41,213,1) 100%, rgba(0,212,255,1) 100%);
+            width: auto;
+            height: auto;
+            margin: 3%;
+            padding: 2%;
+            display:flex;
+            flex-direction:row;">
+                <div style="flex-wrap:wrap;flex:70%;justify-content:space-around;">
+                    <p style="font-size: 15px; color: white;">{{v.datetime}}</p>
+                    <p style="font-size: 15px; color: white;">Category: {{v.category}}</p>
+                    <p style="font-size: 25px; color: white;text-align:justify;padding:0 2% 0 0;"><b>{{v.headline}}</b></p>
+                    <p style="font-size: 15px; color: white;">Source: {{v.source}}</p>
+                </div>
+
+                <div>
+                    <img src="{{v.image}}" height="200px" width="200px">
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

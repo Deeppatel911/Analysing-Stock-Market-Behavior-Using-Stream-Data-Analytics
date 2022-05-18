@@ -1,0 +1,56 @@
+{% extends 'market/base.html' %}
+{% block content %}
+    <h1 style="margin:3%;text-align:center;">IPO Calendar</h1>
+    {% if ipo %}
+        {% for v in ipo %}
+            <div style="background: rgb(11,8,66);
+            background: linear-gradient(90deg, rgba(11,8,66,1) 14%, rgba(41,41,213,1) 100%, rgba(0,212,255,1) 100%);
+            width: auto;
+            height: auto;
+            margin: 3%;
+            padding: 2%;">
+                <p style="font-size: 25px; color: white;">{{v.0}}</p>
+                <p style="font-size: 20px; color: white;">Name: {{v.1}}</p>
+                <p style="font-size: 20px; color: white;">IPO Date: {{v.2}}</p>
+                <p style="font-size: 20px; color: white;">Price Range Low: {{v.3}}</p>
+                <p style="font-size: 20px; color: white;">Price Range High: {{v.4}}</p>
+                <p style="font-size: 20px; color: white;">Currency: {{v.5}}</p>
+                <p style="font-size: 20px; color: white;">Exchange: {{v.6}}</p>
+            </div>
+        {% endfor %}
+
+        <div style="margin:3%">
+                {% if ipo.has_previous %}
+                    <a class="btn btn-outline-primary mb-4" href="/fundamentals/ipo/?page=1">First</a>
+                    <a class="btn btn-outline-primary mb-4" href="/fundamentals/ipo/?page={{ipo.previous_page_number}}">Previous</a>
+                {% endif %}
+
+                {% for num in ipo.paginator.page_range %}
+                    {% if ipo.number == num %}
+                        <a class="btn btn-primary mb-4" href="/fundamentals/ipo/?page={{num}}">{{num}}</a>
+
+                    {% elif num > ipo.number|add:'-3' and num < ipo.number|add:'3'  %}
+                        <a class="btn btn-outline-primary mb-4" href="/fundamentals/ipo/?page={{num}}">{{num}}</a>
+
+                    {% endif %}
+                {% endfor %}
+
+                {% if ipo.has_next %}
+                    <a class="btn btn-outline-primary mb-4" href="/fundamentals/ipo/?page={{ipo.next_page_number}}">Next</a>
+                    <a class="btn btn-outline-primary mb-4" href="/fundamentals/ipo/?page={{ipo.paginator.num_pages}}">Last</a>
+                {% endif %}
+        </div>
+    {% endif %}
+
+    {% if error %}
+    <div style="background: rgb(11,8,66);
+            background: linear-gradient(90deg, rgba(11,8,66,1) 14%, rgba(41,41,213,1) 100%, rgba(0,212,255,1) 100%);
+            width: auto;
+            height: auto;
+            margin: 3%;
+            padding: 2%;">
+        <p style="font-size: 20px; color: white;">{{error}}</p>
+    </div>
+    {% endif %}
+
+{% endblock %}

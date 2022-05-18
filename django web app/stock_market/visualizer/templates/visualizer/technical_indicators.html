@@ -1,0 +1,774 @@
+{% extends 'market/base.html' %}
+{% block content %}
+    <div>
+        <h1 style="margin:3%;text-align:center;">Technical Indicators ({{type}} - {{symbol}})</h1>
+        <div style="margin:3%;">
+            <select name="indicators" id="indicators" style="padding:0.6%;width:83.5%;height:42px;margin:0% 0% 0.2% 0%;" class="custom-select">
+                <option value="Indicator">Indicator</option>
+                <option value="adx">ADX</option>
+                <option value="bbands">BBANDS</option>
+                <option value="ema">EMA</option>
+                <option value="macd">MACD</option>
+                <option value="percent_b">PERCENT_B</option>
+                <option value="rsi">RSI</option>
+                <option value="stoch">STOCH</option>
+                <option value="sma">SMA</option>
+                <option value="vwap">VWAP</option>
+            </select>
+
+            <select style="padding:0.6%;width:10%;height:42px;margin:0% 0% 0.2% 0%;" class="custom-select" name="interval" id="interval">
+                <option value="Interval">Interval</option>
+                <option value="1min">1 min</option>
+                <option value="5min">5 min</option>
+                <option value="15min">15 min</option>
+                <option value="30min">30 min</option>
+                <option value="45min">45 min</option>
+                <option value="1h">1 h</option>
+                <option value="2h">2 h</option>
+                <option value="4h">4 h</option>
+                <option value="8h">8 h</option>
+                <option value="1day">1 day</option>
+                <option value="1week">1 week</option>
+                <option value="1month">1 month</option>
+            </select>
+
+            <button style="padding:0.6%;margin:0 0 0.2% 0;" class="btn btn-primary" name="submit-btn" id="submit-btn" type="submit">Submit</button>
+        </div>
+
+        <div style="margin:3%;" id="graphArea">
+
+        </div>
+
+    </div>
+
+    <script>
+        $('#submit-btn').click(function() {
+            var indicator = $('#indicators').val();
+            var interval = $('#interval').val();
+
+            $.ajax({
+                  type: "POST",
+                  url: "/get_technical_indicator_data/",
+                  data: {
+                     'symbol': '{{symbol}}',
+                     'indicator':indicator,
+                     'interval':interval,
+                  },
+                  success: function (res, status) {
+                    var meta_data = res['output']['meta'];
+                    var graphTitle = meta_data['indicator']['name'];
+                    var interval = "Interval: " + res['output']['meta']['interval'];
+
+                    var values = res['output']['values'];
+                    var date_time= [];
+
+                    var adx_data = [];
+                    var bbands_upper_band = [], bbands_lower_band = [] ,bbands_middle_band = [];
+                    var ema_data = [];
+
+                    var macd_data = [], macd_hist_data = [], macd_signal_data = [];
+                    var percent_b_data = [];
+                    var rsi_data = [];
+
+                    var stoch_d = [] , stoch_k=[];
+                    var sma_data = [];
+                    var vwap_data = [];
+
+                    if(indicator == "adx"){
+                        subtitle = "(" + interval + ",  Time Period: " + meta_data['indicator']['time_period'] + ")";
+
+                        for (var i=0;i<values.length;i++){
+                            adx_data.push(Number(values[i]['adx']));
+                            date_time.push(String(values[i]['datetime']));
+                        }
+
+                        adx_data.reverse();
+                        date_time.reverse();
+
+                        $('#adxChart').remove();
+                        $('#graphArea').append('<canvas style="margin:0 0 3% 0;" id="adxChart"></canvas>');
+
+                        var ctx = document.getElementById('adxChart').getContext('2d');
+                        var volumeChart = new Chart(ctx, {
+                            type: 'line',
+
+                            data: {
+                                labels: date_time,
+                                datasets: [{
+                                    label: 'ADX',
+                                    data: adx_data,
+                                    borderColor: [
+                                        'green',
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            },
+
+                            options: {
+                                responsive: true,
+                                scales:{
+                                    x:{
+                                        title:{
+                                            display:true,
+                                            text: 'Date-Time',
+                                            font:{
+                                                size:15
+                                            }
+                                        }
+                                    },
+                                    y:{
+                                        title:{
+                                            display:true,
+                                            text: 'ADX',
+                                            font:{
+                                                size:15
+                                            }
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: graphTitle,
+                                        font:{
+                                            size:15
+                                        }
+                                    },
+                                    subtitle: {
+                                        display: true,
+                                        text: subtitle
+                                    }
+                                }
+                            }
+                        });
+
+                    }
+
+                    if(indicator == "bbands"){
+                        subtitle = "(" + interval + ", Series Type: " + meta_data['indicator']['series_type']
+                                    + ", Time Period: " + meta_data['indicator']['time_period']
+                                    + ", MA Type: " + meta_data['indicator']['ma_type']
+                                    + ", SD: " + meta_data['indicator']['sd'] + ")";
+
+                        for (var i=0;i<values.length;i++){
+                            bbands_lower_band.push(Number(values[i]['lower_band']));
+                            bbands_middle_band.push(Number(values[i]['middle_band']));
+                            bbands_upper_band.push(Number(values[i]['upper_band']));
+                            date_time.push(String(values[i]['datetime']));
+                        }
+
+                        bbands_lower_band.reverse();
+                        bbands_middle_band.reverse();
+                        bbands_upper_band.reverse();
+                        date_time.reverse();
+
+                        $('#bbandsChart').remove();
+                        $('#graphArea').append('<canvas style="margin:0 0 3% 0;" id="bbandsChart"></canvas>');
+
+                        var ctx = document.getElementById('bbandsChart').getContext('2d');
+                        var volumeChart = new Chart(ctx, {
+                            data: {
+                                labels: date_time,
+                                datasets: [{
+                                    type: 'line',
+                                    label: 'BBANDS_LOWER_BOUND',
+                                    data: bbands_lower_band,
+                                    borderColor: [
+                                        'blue',
+                                        ]
+                                    }, {
+                                    type: 'line',
+                                    label: 'BBANDS_UPPER_BOUND',
+                                    data: bbands_upper_band,
+                                    borderColor: [
+                                        'green',
+                                        ],
+                                    }, {
+                                    type: 'line',
+                                    label: 'BBANDS_MIDDLE_BOUND',
+                                    data: bbands_middle_band,
+                                    borderColor: [
+                                        'red',
+                                        ],
+                                    }
+                                ]
+                            },
+
+                            options: {
+                                responsive: true,
+                                scales:{
+                                    x:{
+                                        title:{
+                                            display:true,
+                                            text: 'Date-Time',
+                                            font:{
+                                                size:15
+                                            }
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: graphTitle,
+                                        font:{
+                                            size:15
+                                        }
+                                    },
+                                    subtitle: {
+                                        display: true,
+                                        text: subtitle
+                                    }
+                                }
+                            }
+                        });
+
+                    }
+
+                    if(indicator == "ema"){
+                        subtitle = "(" + interval + ", Series Type: " + meta_data['indicator']['series_type']
+                                    + ", Time Period: " + meta_data['indicator']['time_period'] + ")";
+
+                        for (var i=0;i<values.length;i++){
+                            ema_data.push(Number(values[i]['ema']));
+                            date_time.push(String(values[i]['datetime']));
+                        }
+
+                        ema_data.reverse();
+                        date_time.reverse();
+
+                        $('#emaChart').remove();
+                        $('#graphArea').append('<canvas style="margin:0 0 3% 0;" id="emaChart"></canvas>');
+
+                        var ctx = document.getElementById('emaChart').getContext('2d');
+                        var volumeChart = new Chart(ctx, {
+                            type: 'line',
+
+                            data: {
+                                labels: date_time,
+                                datasets: [{
+                                    label: 'EMA',
+                                    data: ema_data,
+                                    borderColor: [
+                                        'green',
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            },
+
+                            options: {
+                                responsive: true,
+                                scales:{
+                                    x:{
+                                        title:{
+                                            display:true,
+                                            text: 'Date-Time',
+                                            font:{
+                                                size:15
+                                            }
+                                        }
+                                    },
+                                    y:{
+                                        title:{
+                                            display:true,
+                                            text: 'EMA',
+                                            font:{
+                                                size:15
+                                            }
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: graphTitle,
+                                        font:{
+                                            size:15
+                                        }
+                                    },
+                                    subtitle: {
+                                        display: true,
+                                        text: subtitle
+                                    }
+                                }
+                            }
+                        });
+
+                    }
+
+
+                    if(indicator == "macd"){
+                        subtitle = "(" + interval + ", Series Type: " + meta_data['indicator']['series_type']
+                                    + ", Signal Period: " + meta_data['indicator']['signal_period']
+                                    + ", Fast Period: " + meta_data['indicator']['fast_period']
+                                    + ", Slow Period: " + meta_data['indicator']['slow_period'] + ")";
+
+                        for (var i=0;i<values.length;i++){
+                            macd_data.push(Number(values[i]['macd']));
+                            macd_hist_data.push(Number(values[i]['macd_hist']));
+                            macd_signal_data.push(Number(values[i]['macd_signal']));
+                            date_time.push(String(values[i]['datetime']));
+                        }
+
+                        macd_data.reverse();
+                        macd_hist_data.reverse();
+                        macd_signal_data.reverse();
+                        date_time.reverse();
+
+                        $('#macdChart').remove();
+                        $('#graphArea').append('<canvas style="margin:0 0 3% 0;" id="macdChart"></canvas>');
+
+                        var ctx = document.getElementById('macdChart').getContext('2d');
+                        var volumeChart = new Chart(ctx, {
+                            data: {
+                                labels: date_time,
+                                datasets: [{
+                                    type: 'line',
+                                    label: 'MACD',
+                                    data: macd_data,
+                                    borderColor: [
+                                        'blue',
+                                        ]
+                                    }, {
+                                    type: 'bar',
+                                    label: 'MACD_HIST',
+                                    data: macd_hist_data,
+                                    backgroundColor: [
+                                        'green',
+                                        ],
+                                    borderColor: [
+                                        'green',
+                                        ],
+                                    }, {
+                                    type: 'line',
+                                    label: 'MACD_SIGNAL',
+                                    data: macd_signal_data,
+                                    borderColor: [
+                                        'orange',
+                                        ],
+                                    }
+                                ]
+                            },
+
+                            options: {
+                                responsive: true,
+                                scales:{
+                                    x:{
+                                        title:{
+                                            display:true,
+                                            text: 'Date-Time',
+                                            font:{
+                                                size:15
+                                            }
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: graphTitle,
+                                        font:{
+                                            size:15
+                                        }
+                                    },
+                                    subtitle: {
+                                        display: true,
+                                        text: subtitle
+                                    }
+                                }
+                            }
+                        });
+
+                    }
+
+                    if(indicator == "percent_b"){
+                        subtitle = "(" + interval + ", Series Type: " + meta_data['indicator']['series_type']
+                                    + ", Time Period: " + meta_data['indicator']['time_period']
+                                    + ", MA Type: " + meta_data['indicator']['ma_type']
+                                    + ", SD: " + meta_data['indicator']['sd'] + ")";
+
+                        for (var i=0;i<values.length;i++){
+                            percent_b_data.push(Number(values[i]['percent_b']));
+                            date_time.push(String(values[i]['datetime']));
+                        }
+
+                        percent_b_data.reverse();
+                        date_time.reverse();
+
+                        $('#percent_bChart').remove();
+                        $('#graphArea').append('<canvas style="margin:0 0 3% 0;" id="percent_bChart"></canvas>');
+
+                        var ctx = document.getElementById('percent_bChart').getContext('2d');
+                        var volumeChart = new Chart(ctx, {
+                            type: 'line',
+
+                            data: {
+                                labels: date_time,
+                                datasets: [{
+                                    label: 'PERCENT_B',
+                                    data: percent_b_data,
+                                    borderColor: [
+                                        'green',
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            },
+
+                            options: {
+                                responsive: true,
+                                scales:{
+                                    x:{
+                                        title:{
+                                            display:true,
+                                            text: 'Date-Time',
+                                            font:{
+                                                size:15
+                                            }
+                                        }
+                                    },
+                                    y:{
+                                        title:{
+                                            display:true,
+                                            text: 'PERCENT_B',
+                                            font:{
+                                                size:15
+                                            }
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: graphTitle,
+                                        font:{
+                                            size:15
+                                        }
+                                    },
+                                    subtitle: {
+                                        display: true,
+                                        text: subtitle
+                                    }
+                                }
+                            }
+                        });
+
+                    }
+
+                    if(indicator == "rsi"){
+                        subtitle = "(" + interval + ", Series Type: " + meta_data['indicator']['series_type']
+                                    + ", Time Period: " + meta_data['indicator']['time_period'] + ")";
+
+                        for (var i=0;i<values.length;i++){
+                            rsi_data.push(Number(values[i]['rsi']));
+                            date_time.push(String(values[i]['datetime']));
+                        }
+
+                        rsi_data.reverse();
+                        date_time.reverse();
+
+                        $('#rsiChart').remove();
+                        $('#graphArea').append('<canvas style="margin:0 0 3% 0;" id="rsiChart"></canvas>');
+
+                        var ctx = document.getElementById('rsiChart').getContext('2d');
+                        var volumeChart = new Chart(ctx, {
+                            type: 'line',
+
+                            data: {
+                                labels: date_time,
+                                datasets: [{
+                                    label: 'RSI',
+                                    data: rsi_data,
+                                    borderColor: [
+                                        'green',
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            },
+
+                            options: {
+                                responsive: true,
+                                scales:{
+                                    x:{
+                                        title:{
+                                            display:true,
+                                            text: 'Date-Time',
+                                            font:{
+                                                size:15
+                                            }
+                                        }
+                                    },
+                                    y:{
+                                        title:{
+                                            display:true,
+                                            text: 'RSI',
+                                            font:{
+                                                size:15
+                                            }
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: graphTitle,
+                                        font:{
+                                            size:15
+                                        }
+                                    },
+                                    subtitle: {
+                                        display: true,
+                                        text: subtitle
+                                    }
+                                }
+                            }
+                        });
+
+                    }
+
+
+
+                    if(indicator == "stoch"){
+                        subtitle = "(" + interval + ", fast k period " + meta_data['indicator']['fast_k_period']
+                                    + ", slow k period " + meta_data['indicator']['slow_k_period'] + ")";
+
+                        for (var i=0;i<values.length;i++){
+                            stoch_k.push(Number(values[i]['slow_k']));
+                            stoch_d.push(Number(values[i]['slow_d']));
+                            date_time.push(String(values[i]['datetime']));
+                        }
+
+                        stoch_k.reverse();
+                        stoch_d.reverse();
+                        date_time.reverse();
+
+                        $('#stochChart').remove();
+                        $('#graphArea').append('<canvas style="margin:0 0 4% 0;" id="stochChart"></canvas>');
+
+                        var ctx = document.getElementById('stochChart').getContext('2d');
+                        var volumeChart = new Chart(ctx, {
+                            data: {
+                                labels: date_time,
+                                datasets: [{
+                                    type: 'line',
+                                    label: 'SLOW_K',
+                                    data: stoch_k,
+                                    borderColor: [
+                                        'blue',
+                                        ]
+                                    },  {
+                                    type: 'line',
+                                    label: 'SLOW_D',
+                                    data: stoch_d,
+                                    borderColor: [
+                                        'orange',
+                                        ],
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                scales:{
+                                    x:{
+                                        title:{
+                                            display:true,
+                                            text: 'Date-Time',
+                                            font:{
+                                                size:15
+                                            }
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: graphTitle,
+                                        font:{
+                                            size:15
+                                        }
+                                    },
+                                    subtitle: {
+                                        display: true,
+                                        text: subtitle
+                                    }
+                                }
+                            }
+                        });
+
+                    }
+
+                    if(indicator == "sma"){
+                        subtitle = "(" + interval + ", Series Type: " + meta_data['indicator']['series_type']
+                                    + ", Time Period: " + meta_data['indicator']['time_period'] + ")";
+
+                        for (var i=0;i<values.length;i++){
+                            sma_data.push(Number(values[i]['sma']));
+                            date_time.push(String(values[i]['datetime']));
+                        }
+
+                        sma_data.reverse();
+                        date_time.reverse();
+
+                        $('#smaChart').remove();
+                        $('#graphArea').append('<canvas style="margin:0 0 4% 0;" id="smaChart"></canvas>');
+
+                        var ctx = document.getElementById('smaChart').getContext('2d');
+                        var volumeChart = new Chart(ctx, {
+                            type: 'line',
+
+                            data: {
+                                labels: date_time,
+                                datasets: [{
+                                    label: 'SMA',
+                                    data: sma_data,
+                                    borderColor: [
+                                        'blue',
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            },
+
+                            options: {
+                                responsive: true,
+                                scales:{
+                                    x:{
+                                        title:{
+                                            display:true,
+                                            text: 'Date-Time',
+                                            font:{
+                                                size:15
+                                            }
+                                        }
+                                    },
+                                    y:{
+                                        title:{
+                                            display:true,
+                                            text: 'SMA',
+                                            font:{
+                                                size:15
+                                            }
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: graphTitle,
+                                        font:{
+                                            size:15
+                                        }
+                                    },
+                                    subtitle: {
+                                        display: true,
+                                        text: subtitle
+                                    }
+                                }
+                            }
+                        });
+
+                    }
+
+                    if(indicator == "vwap"){
+                        subtitle = "(" + interval + " )";
+
+                        for (var i=0;i<values.length;i++){
+                            vwap_data.push(Number(values[i]['vwap']));
+                            date_time.push(String(values[i]['datetime']));
+                        }
+
+                        vwap_data.reverse();
+                        date_time.reverse();
+
+                        $('#vwapChart').remove();
+                        $('#graphArea').append('<canvas style="margin:0 0 4% 0;" id="vwapChart"></canvas>');
+
+                        var ctx = document.getElementById('vwapChart').getContext('2d');
+                        var volumeChart = new Chart(ctx, {
+                            type: 'line',
+
+                            data: {
+                                labels: date_time,
+                                datasets: [{
+                                    label: 'VWAP',
+                                    data: vwap_data,
+                                    borderColor: [
+                                        'blue',
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            },
+
+                            options: {
+                                responsive: true,
+                                scales:{
+                                    x:{
+                                        title:{
+                                            display:true,
+                                            text: 'Date-Time',
+                                            font:{
+                                                size:15
+                                            }
+                                        }
+                                    },
+                                    y:{
+                                        title:{
+                                            display:true,
+                                            text: 'VWAP',
+                                            font:{
+                                                size:15
+                                            }
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: graphTitle,
+                                        font:{
+                                            size:15
+                                        }
+                                    },
+                                    subtitle: {
+                                        display: true,
+                                        text: subtitle
+                                    }
+                                }
+                            }
+                        });
+
+                    }
+
+
+                  }
+            });
+        });
+        
+    </script>
+
+{% endblock %}

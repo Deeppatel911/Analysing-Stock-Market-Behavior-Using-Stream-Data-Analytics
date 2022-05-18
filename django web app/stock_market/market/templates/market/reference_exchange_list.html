@@ -1,0 +1,47 @@
+{% extends 'market/base.html' %}
+{% block content %}
+<div>
+    <h1 style="margin:3%;text-align:center;">Exchanges</h1>
+    {% for v in exchanges %}
+        {% if v.0 != 'name' %}
+        <div style="background: rgb(11,8,66);
+            background: linear-gradient(90deg, rgba(11,8,66,1) 14%, rgba(41,41,213,1) 100%, rgba(0,212,255,1) 100%);
+            width: auto;
+            height: auto;
+            margin: 3%;
+            padding: 2%;">
+            <p style="font-size: 20px; color: white;">Name: {{v.0}}</p>
+            <p style="font-size: 20px; color: white;">Code: {{v.1}}</p>
+            <p style="font-size: 20px; color: white;">Country: {{v.2}}</p>
+            <p style="font-size: 20px; color: white;">Timezone: {{v.3}}</p>
+        </div>
+        {% endif %}
+    {% endfor %}
+
+
+    <div style="margin:3%;">
+        {% if exchanges.has_previous %}
+            <a class="btn btn-outline-primary mb-4" href="/reference/exchange_list/?page=1">First</a>
+            <a class="btn btn-outline-primary mb-4" href="/reference/exchange_list/?page={{exchanges.previous_page_number}}">Previous</a>
+        {% endif %}
+
+        {% for num in exchanges.paginator.page_range %}
+            {% if exchanges.number == num %}
+                <a class="btn btn-primary mb-4" href="/reference/exchange_list/?page={{num}}">{{num}}</a>
+
+            {% elif num > exchanges.number|add:'-3' and num < exchanges.number|add:'3'  %}
+                <a class="btn btn-outline-primary mb-4" href="/reference/exchange_list/?page={{num}}">{{num}}</a>
+
+            {% endif %}
+
+        {% endfor %}
+
+        {% if exchanges.has_next %}
+            <a class="btn btn-outline-primary mb-4" href="/reference/exchange_list/?page={{exchanges.next_page_number}}">Next</a>
+            <a class="btn btn-outline-primary mb-4" href="/reference/exchange_list/?page={{exchanges.paginator.num_pages}}">Last</a>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}

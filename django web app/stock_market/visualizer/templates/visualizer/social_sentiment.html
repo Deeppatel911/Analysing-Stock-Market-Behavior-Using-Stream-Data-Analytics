@@ -1,0 +1,441 @@
+{% extends 'market/base.html' %}
+{% block content %}
+    <div>
+        <h1 style="margin:3%;text-align:center;">Social Sentiment (Stock - {{symbol}})</h1>
+
+        <div style="height: auto;
+        width: 40%;
+        margin:3% 3% 3% 30%;
+        background: rgb(11,8,66);
+        background: linear-gradient(90deg, rgba(11,8,66,1) 14%, rgba(41,41,213,1) 100%, rgba(0,212,255,1) 100%);
+        border-radius: 20px" align="center">
+            <label style="font-size: 20px;color: white;margin:9.5% 0 3% 0;" for="from_date">From Date:</label>
+            <input style="font-size: 20px;width:50%;margin:0 0 0 3%;display:inline;" class="form-control" type="text" name="from_date" id="from_date" placeholder="YYYY-MM-DD" required><br><br>
+
+            <label style="font-size: 20px;color: white;margin:0 0 3% 0;" for="to_date">To Date:</label>
+            <input style="font-size: 20px;width:50%;margin:0 0 0 7.8%;display:inline;" class="form-control" type="text" name="to_date" id="to_date" placeholder="YYYY-MM-DD" required><br><br>
+
+            <button style="margin:0 0 8% 0;" class="btn btn-primary" id="submit-btn" type="submit">submit</button>
+
+        </div>
+
+        <div style="margin:3%;">
+            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" role="tab" type="button" name="reddit" id="reddit" onclick="toggleDisplay('redditCharts');">Reddit</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" role="tab" type="button" name="twitter" id="twitter" onclick="toggleDisplay('twitterCharts');">Twitter</button>
+                </li>
+            </ul>
+        </div>
+
+        <div style="margin:3%;" id="graphArea">
+            <div id="redditCharts">
+
+            </div>
+
+            <div id="twitterCharts" style="display:none;">
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+    function toggleDisplay(id){
+            var x=document.getElementById(id);
+
+            if(x.id == "redditCharts"){
+                var y=document.getElementById('twitterCharts');
+                y.style.display = "none";
+                x.style.display = "block";
+
+                var btn1=document.getElementById('reddit');
+                var btn2=document.getElementById('twitter');
+
+                btn2.classList.remove('active');
+                btn1.classList.add('active');
+            }
+            else
+            {
+                var y=document.getElementById('redditCharts');
+                y.style.display = "none";
+                x.style.display = "block";
+
+                var btn1=document.getElementById('reddit');
+                var btn2=document.getElementById('twitter');
+
+                btn1.classList.remove('active');
+                btn2.classList.add('active');
+            }
+    }
+
+    $(document).ready(function(){
+        $.ajax({
+              type:"POST",
+              url: "/get_social_sentiment_data/",
+              data: {
+                 'symbol': '{{symbol}}',
+              },
+              success: function (res, status) {
+
+                var reddit_data = res['output']['reddit'];
+                var twitter_data = res['output']['twitter'];
+
+                var positive_score_reddit = [], negative_score_reddit = [], at_time_reddit = [];
+                var positive_score_twitter = [], negative_score_twitter = [], at_time_twitter = [];
+
+                //var graphTitle = res['output']['name'];
+                //var subtitle = '(Unit: ' + res['output']['unit'] + ', Interval: ' + res['output']['interval'] + ')';
+
+                if(reddit_data.length){
+                    for(var i=0;i<reddit_data.length;i++){
+                        positive_score_reddit.push(Number(reddit_data[i]['positiveScore']));
+                        negative_score_reddit.push(Number(reddit_data[i]['negativeScore']));
+                        at_time_reddit.push(String(reddit_data[i]['atTime']));
+                    }
+
+                    positive_score_reddit.reverse();
+                    negative_score_reddit.reverse();
+                    at_time_reddit.reverse();
+
+                    $('#redditCharts').append('<canvas id="reddit_positive_vs_negative_sentiment_score" style="margin:0 0 3% 0;"></canvas>');
+
+                    // reddit positive vs negative sentiment
+                    var reddit_p_v_n_s = document.getElementById('reddit_positive_vs_negative_sentiment_score').getContext('2d');
+
+                    var reddit_p_v_n_s_Chart = new Chart(reddit_p_v_n_s,{
+                        type:'line',
+
+                        data:{
+                            labels:at_time_reddit,
+                            datasets:[{
+                                label:'positive_score',
+                                data:positive_score_reddit,
+                                borderColor:'green',
+                                borderWidth:2
+                                },{
+                                label:'negative_score',
+                                data:negative_score_reddit,
+                                borderColor:'red',
+                                borderWidth:2
+                                }
+                            ],
+                        },
+
+                        options:{
+                            responsive:true,
+                            scales:{
+                                x:{
+                                    title:{
+                                        display:true,
+                                        text: 'Date-Time',
+                                        font:{
+                                            size:15
+                                        }
+                                    }
+                                },
+                                y:{
+                                    title:{
+                                        display:true,
+                                        text: 'Score',
+                                        font:{
+                                            size:15
+                                            }
+                                        }
+                                    }
+                                },
+                            plugins:{
+                                title:{
+                                    display:true,
+                                    text:'Reddit',
+                                    font:{
+                                        size:15
+                                    }
+                                },
+                                subtitle:{
+                                    display:true,
+                                    text:'Positive vs Negative Sentiment'
+                                }
+                            }
+                        }
+                    });
+                }
+                else{
+                    var error_message = res['output']['symbol'] + " wasn't mentioned on Reddit since yesterday.";
+                    $('#redditCharts').append('<p id="reddit_positive_vs_negative_sentiment_score" style="margin:0 0 3% 0;">' + error_message + '</p>');
+                }
+
+
+                if(twitter_data.length){
+                    for(var i=0;i<twitter_data.length;i++){
+                        positive_score_twitter.push(Number(twitter_data[i]['positiveScore']));
+                        negative_score_twitter.push(Number(twitter_data[i]['negativeScore']));
+                        at_time_twitter.push(String(twitter_data[i]['atTime']));
+                    }
+
+                    positive_score_twitter.reverse();
+                    negative_score_twitter.reverse();
+                    at_time_twitter.reverse();
+
+                    $('#twitterCharts').append('<canvas id="twitter_positive_vs_negative_sentiment_score" style="margin:0 0 3% 0;"></canvas>');
+
+                    // twitter positive vs negative sentiment
+                    var twitter_p_v_n_s = document.getElementById('twitter_positive_vs_negative_sentiment_score').getContext('2d');
+
+                    var twitter_p_v_n_s_Chart = new Chart(twitter_p_v_n_s,{
+                        type:'line',
+
+                        data:{
+                            labels:at_time_twitter,
+                            datasets:[{
+                                label:'positive_score',
+                                data:positive_score_twitter,
+                                borderColor:'green',
+                                borderWidth:2
+                                },{
+                                label:'negative_score',
+                                data:negative_score_twitter,
+                                borderColor:'red',
+                                borderWidth:2
+                                }
+                            ],
+                        },
+
+                        options:{
+                            responsive:true,
+                            scales:{
+                                x:{
+                                    title:{
+                                        display:true,
+                                        text: 'Date-Time',
+                                        font:{
+                                            size:15
+                                        }
+                                    }
+                                },
+                                y:{
+                                    title:{
+                                        display:true,
+                                        text: 'Score',
+                                        font:{
+                                            size:15
+                                            }
+                                        }
+                                    }
+                                },
+                            plugins:{
+                                title:{
+                                    display:true,
+                                    text:'Twitter',
+                                    font:{
+                                        size:15
+                                    }
+                                },
+                                subtitle:{
+                                    display:true,
+                                    text:'Positive vs Negative Sentiment'
+                                }
+                            }
+                        }
+                    });
+                }
+                else{
+                    var error_message = res['output']['symbol'] + " wasn't mentioned on Twitter since yesterday";
+                    $('#twitterCharts').append('<p id="twitter_positive_vs_negative_sentiment_score" style="margin:0 0 3% 0;">' + error_message + '</p>');
+                }
+
+              }
+        });
+    });
+
+
+    $('#submit-btn').click(function(){
+        var from_date = $('#from_date').val();
+        var to_date = $('#to_date').val();
+
+        $.ajax({
+              type:"POST",
+              url: "/get_social_sentiment_data/",
+              data: {
+                 'symbol': '{{symbol}}',
+                 'from_date':from_date,
+                 'to_date':to_date
+              },
+              success: function (res, status) {
+
+                var reddit_data = res['output']['reddit'];
+                var twitter_data = res['output']['twitter'];
+
+                var positive_score_reddit = [], negative_score_reddit = [], at_time_reddit = [];
+                var positive_score_twitter = [], negative_score_twitter = [], at_time_twitter = [];
+
+                //var graphTitle = res['output']['name'];
+                //var subtitle = '(Unit: ' + res['output']['unit'] + ', Interval: ' + res['output']['interval'] + ')';
+
+                if(reddit_data.length){
+                    for(var i=0;i<reddit_data.length;i++){
+                        positive_score_reddit.push(Number(reddit_data[i]['positiveScore']));
+                        negative_score_reddit.push(Number(reddit_data[i]['negativeScore']));
+                        at_time_reddit.push(String(reddit_data[i]['atTime']));
+                    }
+
+                    positive_score_reddit.reverse();
+                    negative_score_reddit.reverse();
+                    at_time_reddit.reverse();
+
+                    $('#reddit_positive_vs_negative_sentiment_score').remove(); // this is my <canvas> element
+                    $('#redditCharts').append('<canvas id="reddit_positive_vs_negative_sentiment_score" style="margin:0 0 3% 0;"><canvas>');
+
+                    // reddit positive vs negative sentiment
+                    var reddit_p_v_n_s = document.getElementById('reddit_positive_vs_negative_sentiment_score').getContext('2d');
+
+                    var reddit_p_v_n_s_Chart = new Chart(reddit_p_v_n_s,{
+                        type:'line',
+
+                        data:{
+                            labels:at_time_reddit,
+                            datasets:[{
+                                label:'positive_score',
+                                data:positive_score_reddit,
+                                borderColor:'green',
+                                borderWidth:2
+                                },{
+                                label:'negative_score',
+                                data:negative_score_reddit,
+                                borderColor:'red',
+                                borderWidth:2
+                                }
+                            ],
+                        },
+
+                        options:{
+                            responsive:true,
+                            scales:{
+                                x:{
+                                    title:{
+                                        display:true,
+                                        text: 'Date-Time',
+                                        font:{
+                                            size:15
+                                        }
+                                    }
+                                },
+                                y:{
+                                    title:{
+                                        display:true,
+                                        text: 'Score',
+                                        font:{
+                                            size:15
+                                            }
+                                        }
+                                    }
+                                },
+                            plugins:{
+                                title:{
+                                    display:true,
+                                    text:'Reddit',
+                                    font:{
+                                        size:15
+                                    }
+                                },
+                                subtitle:{
+                                    display:true,
+                                    text:'Positive vs Negative Sentiment'
+                                }
+                            }
+                        }
+                    });
+                }
+                else{
+                    var error_message = res['output']['symbol'] + " wasn't mentioned on Reddit since yesterday.";
+                    $('#redditCharts').append('<p id="reddit_positive_vs_negative_sentiment_score" style="margin:0 0 3% 0;">' + error_message + '</p>');
+                }
+
+                if(twitter_data.length){
+                    for(var i=0;i<twitter_data.length;i++){
+                        positive_score_twitter.push(Number(twitter_data[i]['positiveScore']));
+                        negative_score_twitter.push(Number(twitter_data[i]['negativeScore']));
+                        at_time_twitter.push(String(twitter_data[i]['atTime']));
+                    }
+
+                    positive_score_twitter.reverse();
+                    negative_score_twitter.reverse();
+                    at_time_twitter.reverse();
+
+                    $('#twitter_positive_vs_negative_sentiment_score').remove(); // this is my <canvas> element
+                    $('#twitterCharts').append('<canvas id="twitter_positive_vs_negative_sentiment_score" style="margin:0 0 3% 0;"><canvas>');
+
+                    // twitter positive vs negative sentiment
+                    var twitter_p_v_n_s = document.getElementById('twitter_positive_vs_negative_sentiment_score').getContext('2d');
+
+                    var twitter_p_v_n_s_Chart = new Chart(twitter_p_v_n_s,{
+                        type:'line',
+
+                        data:{
+                            labels:at_time_twitter,
+                            datasets:[{
+                                label:'positive_score',
+                                data:positive_score_twitter,
+                                borderColor:'green',
+                                borderWidth:2
+                                },{
+                                label:'negative_score',
+                                data:negative_score_twitter,
+                                borderColor:'red',
+                                borderWidth:2
+                                }
+                            ],
+                        },
+
+                        options:{
+                            responsive:true,
+                            scales:{
+                                x:{
+                                    title:{
+                                        display:true,
+                                        text: 'Date-Time',
+                                        font:{
+                                            size:15
+                                        }
+                                    }
+                                },
+                                y:{
+                                    title:{
+                                        display:true,
+                                        text: 'Score',
+                                        font:{
+                                            size:15
+                                            }
+                                        }
+                                    }
+                                },
+                            plugins:{
+                                title:{
+                                    display:true,
+                                    text:'Twitter',
+                                    font:{
+                                        size:15
+                                    }
+                                },
+                                subtitle:{
+                                    display:true,
+                                    text:'Positive vs Negative Sentiment'
+                                }
+                            }
+                        }
+                    });
+                }
+                else{
+                    var error_message = res['output']['symbol'] + " wasn't mentioned on Twitter since yesterday";
+                    $('#twitterCharts').append('<p id="twitter_positive_vs_negative_sentiment_score" style="margin:0 0 3% 0;">' + error_message + '</p>');
+                }
+
+              }
+        });
+    });
+
+    </script>
+
+{% endblock %}
